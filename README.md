@@ -7,7 +7,7 @@
 ### API: https://developer.uspto.gov/api-catalog 
 
 ## Requirement 
-########Inventors would be able to create an account in Made to Invent App.  
+####Inventors would be able to create an account in Made to Invent App.  
 
 ########Fields: Username & Password 
 
