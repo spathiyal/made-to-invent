@@ -13,4 +13,4 @@ Fields: Username & Password
 
 Links: New User, Forgot username/password 
 
-Once logged in the first-time inventor can see a dashboard.  
+Once logged in, the first-time inventor can see a dashboard.  
