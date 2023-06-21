@@ -6,7 +6,7 @@ Replace the physical patent plaque with a digital site where the inventor can se
 ##Tech Stack:  
 API: https://developer.uspto.gov/api-catalog 
 
-## Requirement 
+## Requirement - to be updated.....
 Inventors would be able to create an account in Made to Invent App.  
 
 Fields: Username & Password 
