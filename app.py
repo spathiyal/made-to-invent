@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template,flash,g,session
+from flask import Flask, request, redirect, render_template, flash, g, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_debugtoolbar import DebugToolbarExtension
 from email_validator import validate_email
@@ -38,10 +38,12 @@ def do_login(user):
     """Log in user."""
     session[CURR_USER_KEY] = user.username
 
+
 def do_logout():
     """Logout user."""
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
+
 
 @app.route('/logout')
 def logout():
@@ -55,21 +57,19 @@ def home_page():
     return render_template("home.html")
 
 
-
-@app.route('/signup',methods=["GET","POST"])
-
+@app.route('/signup', methods=["GET", "POST"])
 def signup():
     form = UserForm()
     if form.validate_on_submit():
         # is this post request and valid?
         try:
             new_user = User.newUserSignUp(
-            firstname   = form.firstname.data,
-            middlename  = form.middlename.data,
-            lastname    = form.lastname.data,
-            email       = form.email.data,
-            username    = form.username.data,
-            password    = form.password.data
+                firstname=form.firstname.data,
+                middlename=form.middlename.data,
+                lastname=form.lastname.data,
+                email=form.email.data,
+                username=form.username.data,
+                password=form.password.data
             )
             db.session.add(new_user)
             db.session.commit()
@@ -82,9 +82,6 @@ def signup():
         return render_template('signup.html', form=form)
 
 
-
-
-
 @app.route('/login', methods=["GET", "POST"])
 def login():
     """Handle user login."""
@@ -93,34 +90,33 @@ def login():
 
     if form.validate_on_submit():
         auth_user = User.login(form.username.data,
-                                 form.password.data)
+                               form.password.data)
 
         if auth_user:
             do_login(auth_user)
-            return render_template('/inventor-list.html',user=auth_user)
+            return render_template('/inventor-list.html', user=auth_user)
         user = User.query.filter_by(username=form.username.data).first()
         if user:
             flash("Invalid password.")
         if not user:
             flash("Invalid username.")
 
-
     return render_template('/login.html', form=form)
 
-@app.route('/<int:id>/edit',methods=["GET","POST"])
+
+@app.route('/<int:id>/edit', methods=["GET", "POST"])
 def edit(id):
     user = User.query.get_or_404(id)
     form = UserForm(obj=user)
     if form.validate_on_submit():
-        firstname   = form.firstname.data,
-        middlename  = form.middlename.data,
-        lastname    = form.lastname.data,
-        email       = form.email.data
+        firstname = form.firstname.data,
+        middlename = form.middlename.data,
+        lastname = form.lastname.data,
+        email = form.email.data
         db.session.commit()
         return redirect("/")
     else:
-     return render_template("edit.html", form=form)
-
+        return render_template("edit.html", form=form)
 
 
 # test from https://python-adv-web-apps.readthedocs.io/en/latest/flask_db2.html
@@ -129,11 +125,12 @@ def testdb():
     try:
         # db.session.query(text('1')).from_statement(text('SELECT 1')).all()
         inventors = db.session.execute(db.select(User)
-           .order_by(User.firstname)).scalars()
+                                       .order_by(User.firstname)).scalars()
 
         inventor_text = '<ul>'
         for inventor in inventors:
-            inventor_text += '<li>'+',' + inventor.firstname + ', ' + inventor.lastname+ ', ---  ' + inventor.username + ', ---  '+inventor.password +'</li>'
+            inventor_text += '<li>'+',' + inventor.firstname + ', ' + inventor.lastname + \
+                ', ---  ' + inventor.username + ', ---  '+inventor.password + '</li>'
         inventor_text += '</ul>'
         return inventor_text
         # return '<h1>It works.</h1>'
