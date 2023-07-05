@@ -3,34 +3,48 @@
 
 <head>
   <title>Made To Invent</title>
-  <link rel="stylesheet" href="/static/app.css">
-   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-  <script src="http://unpkg.com/jquery"></script>
+
+  <link rel="stylesheet" href="/static/style.css">
+
 </head>
 
-<body >
-  <h1 class ='heading'>Made to Invent</h1>
+<body>
 
-  <nav >
-   <div class="content" >
-    {% if g.user %}
-    <!-- <a href="/add-visit">Add visit</a>
+  <div class="square">
+    <h1>Made To Invent</h1>
+    <nav class="navbar">
+      {% if g.user %}
+      <!-- <a href="/add-visit">Add visit</a>
     <a href="/{{g.user.username}}">Profile</a> -->
-    <a class_="navlink" href="/logout">  Logout </a>
-    {% else %}
-    <a class_="navlink"  href="/signup">New User  </a>
 
-    <a  href="/login" >  Login</a>
-    {% endif %}
+      <a href="/logout"> Logout </a>
+
+<a  href="/inventor">Add Inventor </a>
+
+<a href="/addpatent" >Add Patents</a>
+<a href="/dashboard" >Dashboard</a>
+      {% else %}
+      <a href="/signup">New User </a>
+
+      <a href="/login"> Login</a>
+
+      {% endif %}
+
+
+      <!-- <section class = "messages">
+    {% for category,msg in get_flashed_messages(with_categories = true )%}
+    <p class ={{category}}>{{msg}}</p>
+    {% endfor %}
+  </section> -->
+    </nav>
+    {% block content %}
+
+
+    {% endblock %}
   </div>
 
-  </nav>
 
 
-  {% block content %}BODY CONTENT GOES HERE
-
-  {% endblock %}
 
   <!-- flash messages goes here -->
   <footer></footer>

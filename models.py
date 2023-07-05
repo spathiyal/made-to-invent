@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from sqlalchemy.sql import text
+import datetime
 
 
 db = SQLAlchemy()
@@ -11,6 +12,11 @@ def connect_db(app):
 
     db.app = app
     db.init_app(app)
+
+
+
+    with app.app_context():
+        db.create_all()
 
 
 class User(db.Model):
@@ -58,4 +64,45 @@ class User(db.Model):
 class Patent(db.Model):
     """user table model"""
     __tablename__ = "patents"
-    patentnum = db.Column(db.String(20), primary_key=True,  unique=True)
+    patent_number = db.Column(db.Text, primary_key=True,  unique=True)
+    title = db.Column(db.Text,
+                          nullable=False,
+                          unique=True)
+
+    # iventions = db.relationship('InventorPatent',backref='patent')
+    @classmethod
+    def addPatentToList(cls, patent_number):
+        """add new patent info."""
+
+        # return patent info
+        return cls(patent_number=patent_number)
+
+
+
+class Inventor(db.Model):
+    """Project. Employees can be assigned to this."""
+    __tablename__ = "inventors"
+    inventor_id = db.Column(db.Integer,
+                   primary_key=True,
+                   autoincrement=True)
+
+    inventor_name = db.Column(db.Text,
+                          nullable=False)
+
+    patents = db.relationship('Patent',secondary = 'inventors_patents',backref = 'inventors')
+    # iventions = db.relationship('InventorPatent',backref='inventorß')
+
+
+class InventorPatent(db.Model):
+    """Mapping of an employee to a project."""
+    __tablename__ = "inventors_patents"
+
+    inventor_id = db.Column(db.Integer,
+                       db.ForeignKey("inventors.inventor_id"),
+                       primary_key=True)
+    patent_number = db.Column(db.Text,
+                          db.ForeignKey("patents.patent_number"),
+                          primary_key=True)
+
+
+

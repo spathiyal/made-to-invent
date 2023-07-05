@@ -1,11 +1,44 @@
 {% extends 'base.html' %}
 {% block content %}
-<h3 class = "heading"> Search an Inventor or Patent </h1>
-    <div  class = "parent-container">
-    <ul>
-        <a  href="/inventor">Inventor </a>
 
-        <a href="/patent" >Patent</a>
-    </ul>
+
+<body>
+    <div class="container">
+
+        <table>
+            <thead>
+                <th>Patent Number</th>
+                <th>Title</th>
+                <th>Inventor(s)</th>
+                <th>Issued Date</th>
+            </thead>
+            <tbody>
+                {% for patent in patents %}
+                <tr>
+                    <td>{{patent.patent_number}}
+                    <td>{{patent.title}}
+
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!-- <a href="/employees/new" class="btn btn-success">Add Employee</a> -->
+    </div>
+</body>
 </div>
+<!-- <div class="container">
+
+    <p></p>
+
+    <div class="signup-square">
+
+
+        <h4>Inventor Lists</h4>
+
+
+
+
+    </div> -->
+
 {% endblock %}

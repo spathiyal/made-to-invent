@@ -1,46 +1,34 @@
- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-
 {% extends 'base.html' %}
 {% block content %}
-<h4  >Add New User</h4>
+
 <div class="container">
 
   <p></p>
-  <div class="row justify-content-center">
-    <div class="col-md-8">
 
-  <form  method="POST">
-    {{ form.hidden_tag() }}
-    {% for field in form
+  <div class="signup-square">
+    <form method="POST">
+      <div>
+        <h4>Add New User</h4>
+      </div>
+      {{ form.hidden_tag() }}
+      {% for field in form
       if field.widget.input_type != 'hidden' %}
 
-      <div class="form-group">
-       <div class = "">
-        {{ field.label(class_="formlabel") }}
-        {{ field(class_="inputCol") }}
+      <div>
+        {{ field.label }}
+
+        {{ field }}
+        <p></p>
 
         {% for err in field.errors %}
-        <small class="form-text text-danger">
-          {{ err }}
-          </small>
+
+        {{ err }}
+
         {% endfor %}
-      </div>
-    </div>
-    {% endfor %}
 
-
-    <p><button  type = "submit" class="formbutton">Sign up</button>
-
-
+        {% endfor %}
+        <p><button type="submit">Sign-Up</button>
     </form>
   </div>
-</div>
-</div>
 
-
-
-{% endblock %}
-
-
+  {% endblock %}

@@ -5,8 +5,10 @@ from email_validator import validate_email
 from sqlalchemy.sql import text
 from sqlalchemy.exc import IntegrityError
 from flask_bcrypt import Bcrypt
-from models import db, connect_db, User
-from forms import UserForm, LoginForm
+from models import db, connect_db, User,Patent,Inventor
+from forms import UserForm, LoginForm,PatentForm
+from secrets_1 import API_SECRET_KEY
+import requests
 
 CURR_USER_KEY = "curr_user"
 
@@ -17,6 +19,7 @@ app.config['SQLALCHEMY_ECHO'] = True
 bcrypt = Bcrypt(app)
 connect_db(app)
 
+API_BASE_URL = 'https://api.patentsview.org/patents'
 
 app.config['SECRET_KEY'] = "oh-so-secret"
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
@@ -71,6 +74,7 @@ def signup():
                 username=form.username.data,
                 password=form.password.data
             )
+
             db.session.add(new_user)
             db.session.commit()
         except IntegrityError:
@@ -94,7 +98,7 @@ def login():
 
         if auth_user:
             do_login(auth_user)
-            return render_template('/inventor-list.html', user=auth_user)
+            return redirect('/inventor')
         user = User.query.filter_by(username=form.username.data).first()
         if user:
             flash("Invalid password.")
@@ -103,6 +107,9 @@ def login():
 
     return render_template('/login.html', form=form)
 
+@app.route('/inventor')
+def inventor_list():
+    return render_template("/inventor-list.html")
 
 @app.route('/<int:id>/edit', methods=["GET", "POST"])
 def edit(id):
@@ -139,3 +146,43 @@ def testdb():
         error_text = "<p>The error:<br>" + str(e) + "</p>"
         hed = '<h1>Something is broken.</h1>'
         return hed + error_text
+
+
+
+
+@app.route('/addpatent', methods=["GET", "POST"])
+def add_patents():
+    form = PatentForm()
+    if form.validate_on_submit():
+        patent_number = form.patent_number.data
+        # patent_number = request.args["patent_number"]
+
+        patents = get_patent(patent_number)
+        addPatent= Patent(patent_number=patents["patent_number"],patent_name=patents["patent_name"] ,title=patents["title"])
+        db.session.add(addPatent)
+        db.session.commit()
+        return redirect('/dashboard')
+    else:
+        return render_template('add-patents.html', form=form)
+
+@app.route('/dashboard')
+def dashboard():
+     patents = Patent.query.all()
+     return render_template("inventor-list.html", patents=patents)
+
+
+def get_patent(patent_number):
+    url = f"{API_BASE_URL}/query?q={{\"patent_number\": {patent_number}}}"
+    # url = f"{API_BASE_URL}/query?q={{\"patent_number\": {patent_number}}}&f=[\"patent_date\",\"inventor_first_name\" ,\"inventor_last_name\" ]"
+
+    resp = requests.get(url)
+
+    data = resp.json()
+
+
+    patent_number =  data['patents'][0]['patent_number']
+    title =   data['patents'][0]['patent_title']
+
+
+    return {"patent_number": patent_number,   "title": title}
+
