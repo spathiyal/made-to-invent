@@ -17,3 +17,10 @@ class LoginForm(FlaskForm):
 
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
+
+
+class PatentForm(FlaskForm):
+    """Form to add new patent"""
+
+    patent_number = StringField('Patent Number',validators=[InputRequired(message="Patent Number is required")])
+
