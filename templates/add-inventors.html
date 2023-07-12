@@ -5,10 +5,10 @@
 
   <p></p>
 
-  <div class="signup-square">
+  <div class="patent-square">
     <form method="POST">
       <div>
-        <h3>Add New User</h3>
+        <h3>Add Inventor to dashboard</h3>
       </div>
       {{ form.hidden_tag() }}
       {% for field in form
@@ -17,7 +17,7 @@
       <div>
         {{ field.label }}
 
-        {{ field(placeholder=field.description) }}
+        {{ field }}
         <p></p>
 
         {% for err in field.errors %}
@@ -27,7 +27,7 @@
         {% endfor %}
 
         {% endfor %}
-        <p><button type="submit">Sign-Up</button>
+        <p><button type="submit">Add Patent</button>
     </form>
   </div>
 

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<body>
+    <div class="div-container">
+
+
+
+            <table>
+
+                <div class = "patent-info">  {{patent_title}}
+                <br>
+                <br>
+                {{patent_number}}
+                <br>
+                <br>
+                <br>
+                Filing Date : {{filing_date}} :   Grant Date  : {{issued_date}}
+                <br>
+                <br>
+                <br>
+                {% for inventor in inventors %}
+                {{inventor['inventor_first_name'] + " " + inventor['inventor_last_name']}}
+                <br>
+                <br>
+                {% endfor %}
+               </div>
+
+
+
+
+            </table>
+
+    </div>
+</body>
+{% endblock %}

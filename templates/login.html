@@ -8,7 +8,7 @@
   <div class="login-square">
     <form method="POST">
       <div>
-        <h4>Login</h4>
+        <h3>Login</h3>
       </div>
       {{ form.hidden_tag() }}
       {% for field in form
@@ -17,7 +17,7 @@
       <div>
         {{ field.label }}
 
-        {{ field }}
+        {{ field(placeholder=field.description) }}
         <p></p>
 
         {% for err in field.errors %}

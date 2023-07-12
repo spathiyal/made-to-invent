@@ -3,8 +3,13 @@ h1, h4{
     text-align: center;
     font-family: sans-serif;
 }
+h3{
+  color: rgb(9, 9, 9);
+  text-align: center;
+  font-family: sans-serif;
+}
 .outer{
-    background-color: black;
+    background-color: rgb(0, 0, 0);
 }
 body{
     padding: 0;
@@ -54,35 +59,50 @@ body{
 .square {
     width: 100vw;
     height: 80vw;
-    max-width: 175vh;
+    max-width: 200vh;
     max-height: 100vh;
+    position: relative;
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    background: rgb(7, 7, 7);
+    background: #d2e8f8;
+    overflow:scroll;
+    background-image: linear-gradient(to right,
+    hsl(210, 20%, 98%),
+    hsl(202, 94%, 49%));
+    /* background-color: #f4f4f8; */
   }
 
 
   .signup-square {
     width: 100vw;
     height: 80vw;
-    max-width: 50vh;
+    max-width: 70vh;
     max-height: 50vh;
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    background: rgb(20, 20, 20);
+    background: rgb(241, 238, 238);
   }
 
   .login-square {
     width: 100vw;
+    height: 80vw;
+    max-width: 70vh;
+    max-height: 30vh;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgb(241, 238, 238);
+
+    /* width: 100vw;
     height: 80vw;
     max-width: 50vh;
     max-height: 30vh;
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    background: rgb(20, 20, 20);
+    background: rgb(20, 20, 20); */
   }
 
   div {
@@ -104,8 +124,12 @@ body{
     display: inline-block;
     margin-left: 20px;
     width: 110px;
-    color: #030303;
+    height: 30px;
+    color: black;
     font-family: sans-serif;
+    background-color:hsl(202, 83%, 84%);
+    font-weight: bold;
+    border-radius: 30px;
   }
 
   section{
@@ -147,14 +171,33 @@ body{
 
 }
 
-table {
+.patent-table {
   font-family: sans-serif;
   /* border-collapse: collapse; */
-  width: 70%;
+  width: 100%;
+  color: rgb(245, 83, 8);
+  margin-left: 150px;
+  margin-top: 50px;
+
+  table-layout: fixed;
+  overflow-wrap: break-word;
+  background-color: #f11313;
+
+}
+.inventor-table {
+  font-family: sans-serif;
+  /* border-collapse: collapse; */
+  width: 100%;
   color: rgb(246, 249, 249);
   margin-left: 150px;
   margin-top: 50px;
+
+  table-layout: fixed;
+  overflow-wrap: break-word;
+
+
 }
+
 
 th, td,thead {
   font-family: sans-serif;
@@ -164,13 +207,32 @@ th, td,thead {
 
 tr:nth-child(even) {
   font-family: sans-serif;
-  color: #9f9d9d;
+  color: black;
 }
 tr:nth-child(odd) {
   font-family: sans-serif;
-  color: #9f9d9d;
+  color: black;
+}
+th:nth-child(1){ width:20%; }
+td:nth-child(1){
+  white-space:wrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+
+
+
+}
+.inventor-td{
+  white-space:pre-wrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+
 }
 
+/* td:active {
+  overflow: visible;
+  white-space: normal;
+} */
 .patent-square {
   width: 100vw;
   height: 80vw;
@@ -179,6 +241,34 @@ tr:nth-child(odd) {
   position: absolute;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  background: rgb(20, 20, 20);
+  background: rgb(241, 238, 238);
 
 }
+
+iframe {
+  border: 1px solid rgb(10, 10, 10);
+  background-color: #ddd;
+  color: #f11313;
+  width: 100%; /* takes precedence over the width set with the HTML width attribute */
+}
+
+.patent-info{
+  font-family: sans-serif;
+  text-align: center;
+  padding: 8px;
+  font-size: 30px;
+}
+
+.container{
+
+  text-align: center;
+  text-decoration:double;
+  font-family: sans-serif;
+  color: red;
+}
+.div-container {
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+}
+

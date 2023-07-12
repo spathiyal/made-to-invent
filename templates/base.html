@@ -14,15 +14,15 @@
     <h1>Made To Invent</h1>
     <nav class="navbar">
       {% if g.user %}
-      <!-- <a href="/add-visit">Add visit</a>
-    <a href="/{{g.user.username}}">Profile</a> -->
+
+     <a href="/{{g.user.username}}"></a>
 
       <a href="/logout"> Logout </a>
 
-<a  href="/inventor">Add Inventor </a>
+      <a href="/addinventor">Add Inventor </a>
 
-<a href="/addpatent" >Add Patents</a>
-<a href="/dashboard" >Dashboard</a>
+      <a href="/addpatent">Add Patents</a>
+      <a href="/dashboard">Dashboard</a>
       {% else %}
       <a href="/signup">New User </a>
 
@@ -31,11 +31,7 @@
       {% endif %}
 
 
-      <!-- <section class = "messages">
-    {% for category,msg in get_flashed_messages(with_categories = true )%}
-    <p class ={{category}}>{{msg}}</p>
-    {% endfor %}
-  </section> -->
+
     </nav>
     {% block content %}
 
@@ -46,8 +42,11 @@
 
 
 
-  <!-- flash messages goes here -->
-  <footer></footer>
+  <div class="container">
+    {% for category, message in get_flashed_messages(with_categories=True) %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+    <footer></footer>
 </body>
 
 </html>

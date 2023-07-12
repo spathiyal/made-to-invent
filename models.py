@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from sqlalchemy.sql import text
-import datetime
+from datetime import datetime
 
 
 db = SQLAlchemy()
@@ -16,6 +16,7 @@ def connect_db(app):
 
 
     with app.app_context():
+        db.drop_all()
         db.create_all()
 
 
@@ -65,11 +66,15 @@ class Patent(db.Model):
     """user table model"""
     __tablename__ = "patents"
     patent_number = db.Column(db.Text, primary_key=True,  unique=True)
-    title = db.Column(db.Text,
-                          nullable=False,
-                          unique=True)
-
-    # iventions = db.relationship('InventorPatent',backref='patent')
+    patent_title = db.Column(db.Text,
+                          nullable=False)
+    issued_date = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=datetime.utcnow(),
+    )
+    username = db.Column(db.String(20) )
+    iventions = db.relationship('InventorPatent',backref='patent')
     @classmethod
     def addPatentToList(cls, patent_number):
         """add new patent info."""
@@ -88,9 +93,10 @@ class Inventor(db.Model):
 
     inventor_name = db.Column(db.Text,
                           nullable=False)
+    username = db.Column(db.String(20) )
 
     patents = db.relationship('Patent',secondary = 'inventors_patents',backref = 'inventors')
-    # iventions = db.relationship('InventorPatent',backref='inventorß')
+    iventions = db.relationship('InventorPatent',backref='inventorß')
 
 
 class InventorPatent(db.Model):
@@ -102,6 +108,10 @@ class InventorPatent(db.Model):
                        primary_key=True)
     patent_number = db.Column(db.Text,
                           db.ForeignKey("patents.patent_number"),
+                          primary_key=True)
+
+    username = db.Column(db.Text,
+                          db.ForeignKey("users.username"),
                           primary_key=True)
 
 
