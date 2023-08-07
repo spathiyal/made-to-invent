@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container">
+
+  <p></p>
+
+  <div class="login-square">
+    <form method="POST">
+      <div>
+        <h3>Login</h3>
+      </div>
+      {{ form.hidden_tag() }}
+      {% for field in form
+      if field.widget.input_type != 'hidden' %}
+
+      <div>
+        {{ field.label }}
+
+        {{ field(placeholder=field.description) }}
+        <p></p>
+
+        {% for err in field.errors %}
+
+        {{ err }}
+
+        {% endfor %}
+
+        {% endfor %}
+        <p><button type="submit">Login</button>
+    </form>
+  </div>
+
+  {% endblock %}

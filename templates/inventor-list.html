@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<body>
+    <div class="div-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Number</th>
+                    <th>Title</th>
+                    <th>Issued Date</th>
+                    <th>Inventor(s)</th>
+
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for patent in patents %}
+                {% if (patent.username == g.user.username) %}
+
+                <tr>
+                    <td> <a href='{{patent.patent_number}}'>{{patent.patent_number}}</a></td>
+
+                    <!-- <td>{{patent.patent_number}}</td> -->
+                    <td>{{patent.patent_title}} </td>
+                    <td>{{patent.issued_date.strftime('%m-%d-%Y')}} </td>
+
+                    <td colspan="3">
+                        <table>
+                            <tbody>
+                                {% for inventor in inventors %}
+                                {% for inventor_patent in inventors_patents %}
+                                {% if (inventor_patent.patent_number ==patent.patent_number) and
+                                (inventor_patent.inventor_id == inventor.inventor_id) and (inventor_patent.username == g.user.username) and (inventor.username == g.user.username) %}
+                                <tr>
+                                     <td class="inventor-td">{{inventor.inventor_name}}</td><br>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+{% endblock %}

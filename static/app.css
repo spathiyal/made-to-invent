@@ -1,0 +1,154 @@
+a {
+    color: white;
+    font-size: large;
+    text-decoration: none;
+    left: 252px;
+    float: right;
+    padding-right: 20px;
+
+}
+
+a:hover {
+    color: white;
+    text-decoration: underline;
+    left: 252px;
+    float: right;
+}
+
+.heading {
+    color: rgb(242, 241, 246);
+    text-align: center;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+
+
+    background-image: linear-gradient(to right,
+            hsl(311, 92%, 19%),
+            hsl(248, 43%, 31%));
+}
+
+.formbutton {
+    text-align: center;
+    padding: auto;
+    margin-left: 260px;
+}
+
+input {
+    width: 200px;
+}
+
+.navbar {
+    text-align: right;
+
+    /* overflow: hidden; */
+}
+
+.bg {
+    /* background-image: url("patents.png"); */
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: initial;
+    background-attachment: fixed;
+}
+
+.navbar a {
+    /* float: right; */
+    color: #f2f2f2;
+    /* text-align: center; */
+    /* padding: 14px 16px; */
+    /* text-decoration: none; */
+    font-size: 17px;
+}
+
+.navbar a:hover {
+
+    color: brown;
+}
+
+.messages .success {
+    background-color: rgba(0, 255, 0, 0.1);
+}
+
+.messages .error {
+    background-color: rgba(255, 0, 0, 1);
+}
+
+.new-user {
+    text-align: right
+}
+
+.signup {
+    text-align: right;
+}
+
+.login {
+
+    justify-content: center;
+    display: flex;
+    height: 100%;
+    margin-top: auto;
+    padding: 30px;
+}
+
+.div {
+    margin-bottom: 15px;
+    align-self: center;
+    border: 2px solid;
+}
+
+.formlabel {
+    display: inline-block;
+    width: 150px;
+    font-size: large;
+    font-weight: bold;
+    text-align: right;
+    color: #f7f3f3;
+
+}
+
+.inputCol {
+    width: 400px;
+}
+
+.parent-container {
+    position: fixed;
+    /* position: relative; */
+    border: 2px solid;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    text-decoration: double;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+}
+
+.account-form button {
+    width: 4rem;
+    margin-left: 80px;
+}
+
+#signup-form button {
+    width: 8rem;
+}
+
+.account-forms-container {
+    padding-left: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    margin: 8px 18px 0;
+}
+
+form>* {
+    margin: 10px 0;
+}

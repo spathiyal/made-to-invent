@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Made To Invent</title>
+
+  <link rel="stylesheet" href="/static/style.css">
+
+</head>
+
+<body>
+
+  <div class="square">
+    <h1>Made To Invent</h1>
+    <nav class="navbar">
+      {% if g.user %}
+
+     <a href="/{{g.user.username}}"></a>
+
+      <a href="/logout"> Logout </a>
+
+      <a href="/addinventor">Add Inventor </a>
+
+      <a href="/addpatent">Add Patents</a>
+      <a href="/dashboard">Dashboard</a>
+      {% else %}
+      <a href="/signup">New User </a>
+
+      <a href="/login"> Login</a>
+
+      {% endif %}
+
+
+
+    </nav>
+    {% block content %}
+
+
+    {% endblock %}
+  </div>
+
+
+
+
+  <div class="container">
+    {% for category, message in get_flashed_messages(with_categories=True) %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+    <footer></footer>
+</body>
+
+</html>

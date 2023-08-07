@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Edit User Form</h3>
+<div class="signup">
+  <form  method="POST">
+    {{ form.hidden_tag() }}
+    {% for field in form
+      if field.widget.input_type != 'hidden' %}
+
+      <p>
+        {{ field.label }}
+        {{ field }}
+
+        {% for err in field.errors %}
+          {{ err }}
+        {% endfor %}
+      </p>
+    {% endfor %}
+
+    <!-- <p><input type="text" placeholder="First Name" name="firstname"></p>
+
+    <p><input type="text" placeholder="Middle name" name="middlename"></p>
+    <p><input type="text" placeholder="Last Name" name="lastname"></p>
+    <p><input type="text" placeholder="Email" name="email"></p>
+    <p><input type="text" placeholder="User Name" name="username"></p>
+    <p><input type="text" placeholder="Password" name="password"></p> -->
+    <p><button  type = "submit" class="button">Submit</button>
+
+
+  </form>
+</div>
+
+
+
+{% endblock %}
