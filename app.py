@@ -1,14 +1,16 @@
-from flask import Flask, request, redirect, render_template, flash, g, session
+from flask import Flask, request, redirect, render_template, flash, g, session, url_for, jsonify, json
 from flask_sqlalchemy import SQLAlchemy
 from flask_debugtoolbar import DebugToolbarExtension
 from email_validator import validate_email
 from sqlalchemy.sql import text
 from sqlalchemy.exc import IntegrityError
 from flask_bcrypt import Bcrypt
-from models import db, connect_db, User,Patent,Inventor, InventorPatent
-from forms import UserForm, LoginForm,PatentForm,InventorForm
+from models import db, connect_db, User, Patent, Inventor, InventorPatent
+from forms import UserForm, LoginForm, PatentForm, InventorForm
 from secrets_1 import API_SECRET_KEY
 import requests
+import matplotlib.pyplot as plt
+import numpy as np
 
 CURR_USER_KEY = "curr_user"
 
@@ -20,12 +22,18 @@ bcrypt = Bcrypt(app)
 connect_db(app)
 
 API_BASE_URL = 'https://api.patentsview.org/patents'
+# API_BASE_URL = 'https://search.patentsview.org/api/v1/patent/'
+headers = {
+    "X-Api-Key": "WKkS6kYG.eeoqG9E63eBEZ0J7LA0xZKqVnWrQRfEl"
 
+
+}
 app.config['SECRET_KEY'] = "oh-so-secret"
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
 
 
 # toolbar = DebugToolbarExtension(app)
+
 
 @app.before_request
 def add_user_to_g():
@@ -52,12 +60,17 @@ def do_logout():
 def logout():
     """Handle logout of user."""
     do_logout()
-    return redirect('/')
+    return redirect("/login")
 
 
 @app.route('/')
 def home_page():
-    return render_template("home.html")
+    return redirect("/login")
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 
 @app.route('/signup', methods=["GET", "POST"])
@@ -100,19 +113,21 @@ def login():
 
         if auth_user:
             do_login(auth_user)
-            flash(f"Hello, {auth_user.username}!", "success")
+            flash(f"Hello, {auth_user.username}!", category="success")
             return redirect('/dashboard')
         user = User.query.filter_by(username=form.username.data).first()
         if user:
-            flash("Invalid password.")
+            flash("Invalid password. Please try again.", category="error")
         if not user:
-            flash("Invalid username.")
+            flash("Invalid username.", category="error")
 
     return render_template('/login.html', form=form)
+
 
 @app.route('/inventor')
 def inventor_list():
     return render_template("/inventor-list.html")
+
 
 @app.route('/<int:id>/edit', methods=["GET", "POST"])
 def edit(id):
@@ -151,8 +166,6 @@ def testdb():
         return hed + error_text
 
 
-
-
 @app.route('/addpatent', methods=["GET", "POST"])
 def add_patents():
     form = PatentForm()
@@ -162,35 +175,42 @@ def add_patents():
 
         url = f"{API_BASE_URL}/query?q={{\"patent_number\": {patent_number}}}&f=[\"patent_number\",\"patent_title\",\"patent_date\",\"inventor_first_name\" ,\"inventor_last_name\" , \"inventor_key_id\"  ]"
 
-        resp = requests.get(url)
+        resp = requests.get(url, headers=headers)
 
         data = resp.json()
         for patent in data['patents']:
             patent_number = patent['patent_number']
             patent_title = patent['patent_title']
             issued_date = patent['patent_date']
-            isInthePatentTable = Patent.query.filter_by(patent_number=  patent['patent_number']).first()
-            if(isInthePatentTable == None):
+            isInthePatentTable = Patent.query.filter_by(
+                patent_number=patent['patent_number']).first()
+            if (isInthePatentTable == None):
 
-                p = Patent(patent_number = patent_number, patent_title = patent_title, issued_date = issued_date, username = session[CURR_USER_KEY])
+                p = Patent(patent_number=patent_number, patent_title=patent_title,
+                           issued_date=issued_date, username=session[CURR_USER_KEY])
                 db.session.add(p)
                 db.session.commit()
                 inventors = patent['inventors']
                 for inventor in inventors:
 
-                    name = inventor['inventor_first_name'] + " " + inventor['inventor_last_name']
+                    name = inventor['inventor_first_name'] + \
+                        " " + inventor['inventor_last_name']
 
                     inventor_id = inventor['inventor_key_id']
-                    isIntheInventorList = Inventor.query.filter_by( inventor_id = inventor['inventor_key_id']).first()
-                    if(isIntheInventorList == None):
-                        i = Inventor(inventor_name = name ,inventor_id = inventor_id, username = session[CURR_USER_KEY])
+                    isIntheInventorList = Inventor.query.filter_by(
+                        inventor_id=inventor['inventor_key_id']).first()
+                    if (isIntheInventorList == None):
+                        i = Inventor(
+                            inventor_name=name, inventor_id=inventor_id, username=session[CURR_USER_KEY])
                         db.session.add(i)
                         db.session.commit()
-                        isIntheInvPatTable = InventorPatent.query.filter_by(patent_number=  patent['patent_number'],inventor_id = inventor['inventor_key_id']).first()
-                        if(isIntheInvPatTable == None):
-                          ip =  InventorPatent(patent_number = patent_number , inventor_id = inventor_id, username = session[CURR_USER_KEY])
-                          db.session.add(ip)
-                          db.session.commit()
+                        isIntheInvPatTable = InventorPatent.query.filter_by(
+                            patent_number=patent['patent_number'], inventor_id=inventor['inventor_key_id']).first()
+                        if (isIntheInvPatTable == None):
+                            ip = InventorPatent(
+                                patent_number=patent_number, inventor_id=inventor_id, username=session[CURR_USER_KEY])
+                            db.session.add(ip)
+                            db.session.commit()
 
         # patents = get_patent(patent_number)
         # addPatent= Patent(patent_number=patents["patent_number"],patent_name=patents["patent_name"] ,title=patents["title"])
@@ -199,85 +219,42 @@ def add_patents():
     else:
         return render_template('add-patents.html', form=form)
 
-@app.route('/dashboard')
+
+@app.route('/dashboard', methods=["GET", "POST"])
 def dashboard():
-     getAllPatents = InventorPatent.query.filter_by(username= session[CURR_USER_KEY] ).all()
+
+    # getAllPatents = InventorPatent.query.filter_by(
+    #     username=session[CURR_USER_KEY]).all()
+    ip = InventorPatent.query.filter_by(
+        username=session[CURR_USER_KEY]).all()
+    app.logger.info(ip)
+    inventors_patents = db.session.query(InventorPatent.patent_number, InventorPatent.patent_title, InventorPatent.issued_date).distinct(InventorPatent.patent_number).filter_by(
+        username=session[CURR_USER_KEY]).all()
+    app.logger.info(inventors_patents)
+
+    # app.logger.info(json(res))
+    # inventors_patents = InventorPatent.query.filter_by(
+    #     username=session[CURR_USER_KEY]).all()
+    # inventors = Inventor.query.all()
+
+    #  if request.method == 'POST':
+    #     insert = request.form.get('data')
+    #     # insert = request.form['checkboxvalue']
+    #     print ("value 1=============" ,insert)
+
+    return render_template("inventor-list.html", inventors_patents=inventors_patents)
+
+    #  else:
+    #     msg = 'Invalid'
+    #  return msg
 
 
-
-     patents = Patent.query.all()
-     inventors_patents = InventorPatent.query.all()
-
-     inventors = Inventor.query.all()
-
-
-
-     return render_template("inventor-list.html", patents=patents,inventors=inventors ,inventors_patents = inventors_patents ,getAllPatents= getAllPatents )
-
-
-
-
-
-@app.route('/addinventor', methods=["GET", "POST"])
-def add_inventors():
-    form = InventorForm()
-    if form.validate_on_submit():
-        firstname = form.firstname.data
-        lastname = form.lastname.data
-
-
-        # url = f"{API_BASE_URL}/query?q={{\"_contains\":{{\"inventor_last_name\": \"{lastname}\"}}}}&f=[\"patent_number\",\"patent_title\",\"patent_date\",\"inventor_first_name\" ,\"inventor_last_name\" , \"inventor_key_id\"  ]"
-        url = f"{API_BASE_URL}/query?q={{\"_and\":[{{\"_contains\":{{\"inventor_last_name\": \"{lastname}\"}}}},{{\"_contains\":{{\"inventor_first_name\": \"{firstname}\"}}}}]}}&f=[\"patent_number\",\"patent_title\",\"patent_date\",\"inventor_first_name\" ,\"inventor_last_name\" , \"inventor_key_id\"]"
-
-        resp = requests.get(url)
-
-        data = resp.json()
-        for patent in data['patents']:
-            patent_number = patent['patent_number']
-            patent_title = patent['patent_title']
-            issued_date = patent['patent_date']
-            isInthePatentTable = Patent.query.filter_by(patent_number=  patent['patent_number']).first()
-            if(isInthePatentTable == None):
-
-                p = Patent(patent_number = patent_number, patent_title = patent_title, issued_date = issued_date, username = session[CURR_USER_KEY])
-                db.session.add(p)
-                db.session.commit()
-                inventors = patent['inventors']
-                for inventor in inventors:
-
-                    name = inventor['inventor_first_name'] + " " + inventor['inventor_last_name']
-
-                    inventor_id = inventor['inventor_key_id']
-                    isIntheInventorList = Inventor.query.filter_by( inventor_id = inventor['inventor_key_id']).first()
-                    if(isIntheInventorList == None):
-                        i = Inventor(inventor_name = name ,inventor_id = inventor_id, username = session[CURR_USER_KEY])
-                        db.session.add(i)
-                        db.session.commit()
-                        # isIntheInvPatTable = InventorPatent.query.filter_by(patent_number=  patent['patent_number'],inventor_id = inventor['inventor_key_id']).first()
-                        # raise
-                        # if(isIntheInvPatTable == None):
-                    ip =  InventorPatent(patent_number = patent_number , inventor_id = inventor_id, username = session[CURR_USER_KEY])
-
-                    db.session.add(ip)
-                    db.session.commit()
-
-        # patents = get_patent(patent_number)
-        # addPatent= Patent(patent_number=patents["patent_number"],patent_name=patents["patent_name"] ,title=patents["title"])
-
-        return redirect('/dashboard')
-    else:
-        return render_template('add-inventors.html', form=form)
-
-
-@app.route('/<int:patent_number>' , methods=["GET", "POST"])
-
+@app.route('/<int:patent_number>', methods=["GET", "POST"])
 def show_patent_info(patent_number):
-
-
 
     url = f"{API_BASE_URL}/query?q={{\"patent_number\": {patent_number}}}&f=[\"patent_number\",\"patent_title\",\"patent_date\",\"inventor_first_name\" ,\"inventor_last_name\" , \"inventor_key_id\" ,\"app_date\"  ]"
 
-    resp = requests.get(url)
+    resp = requests.get(url, headers=headers)
 
     data = resp.json()
 
@@ -288,12 +265,97 @@ def show_patent_info(patent_number):
 
         application = patent['applications']
 
-
         filing_date = application[0]['app_date']
 
         inventors = patent['inventors']
         for inventor in inventors:
 
-            name = inventor['inventor_first_name'] + " " + inventor['inventor_last_name']
+            name = inventor['inventor_first_name'] + \
+                " " + inventor['inventor_last_name']
 
-    return render_template("patent-info.html", patent_number=patent_number,patent_title=patent_title,issued_date=issued_date  ,inventors = inventors , filing_date = filing_date)
+    return render_template("patent-info.html", patent_number=patent_number, patent_title=patent_title, issued_date=issued_date, inventors=inventors, filing_date=filing_date)
+
+
+@app.route('/addinventor', methods=["GET", "POST"])
+def add_inventors():
+    form = InventorForm()
+    if form.validate_on_submit():
+        firstname = form.firstname.data
+        lastname = form.lastname.data
+
+        url = f"{API_BASE_URL}/query?q={{\"_and\":[{{\"_contains\":{{\"inventor_last_name\": \"{lastname}\"}}}},{{\"_contains\":{{\"inventor_first_name\": \"{firstname}\"}}}}]}}&f=[\"patent_number\",\"patent_title\",\"patent_date\",\"inventor_first_name\" ,\"inventor_last_name\" , \"inventor_key_id\"]"
+
+        resp = requests.get(url, headers=headers)
+
+        data = resp.json()
+        patents = data['patents']
+
+        return render_template('selected-patents.html', patents=patents)
+
+    else:
+        return render_template('add-inventors.html', form=form)
+
+
+@app.route('/selection', methods=["GET", "POST"])
+def selection():
+    return "Done"
+
+
+@app.route('/add-to-dashboard', methods=["GET", "POST"])
+def add_to_dashboard():
+
+    patent_number = request.args.get("patent_number")
+
+    url = f"{API_BASE_URL}/query?q={{\"patent_number\": {patent_number}}}&f=[\"patent_number\",\"patent_title\",\"patent_date\",\"inventor_first_name\" ,\"inventor_last_name\" , \"inventor_key_id\"  ]"
+
+    resp = requests.get(url, headers=headers)
+
+    data = resp.json()
+
+    for patent in data['patents']:
+        patent_number = patent['patent_number']
+        patent_title = patent['patent_title']
+        issued_date = patent['patent_date']
+        isInthePatentTable = Patent.query.filter_by(
+            patent_number=patent['patent_number']).first()
+        if (isInthePatentTable == None):
+
+            p = Patent(patent_number=patent_number, patent_title=patent_title,
+                       issued_date=issued_date)
+            db.session.add(p)
+            db.session.commit()
+        inventors = patent['inventors']
+        for inventor in inventors:
+            name = inventor['inventor_first_name'] + \
+                " " + inventor['inventor_last_name']
+
+            inventor_id = inventor['inventor_key_id']
+
+            isIntheInventorList = Inventor.query.filter_by(
+                inventor_id=inventor['inventor_key_id']).first()
+            if (isIntheInventorList == None):
+                i = Inventor(
+                    inventor_name=name, inventor_id=inventor_id)
+                db.session.add(i)
+                db.session.commit()
+
+    for patent in data['patents']:
+        patent_number = patent['patent_number']
+        patent_title = patent['patent_title']
+        issued_date = patent['patent_date']
+        inventors = patent['inventors']
+        for inventor in inventors:
+            inventor_id = inventor['inventor_key_id']
+            ip = InventorPatent(
+                patent_number=patent_number, inventor_id=inventor_id,  patent_title=patent_title,
+                issued_date=issued_date, username=session[CURR_USER_KEY])
+            db.session.add(ip)
+            db.session.commit()
+    return redirect('/dashboard')
+
+
+#    ip = InventorPatent(
+#                 patent_number=patent_number, inventor_id=inventor_id,  patent_title=patent_title,
+#                 issued_date=issued_date, username=session[CURR_USER_KEY])
+#             db.session.add(ip)
+#             db.session.commit()

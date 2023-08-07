@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base1.html' %}
 {% block content %}
 
 <div class="container">
@@ -8,7 +8,7 @@
   <div class="patent-square">
     <form method="POST">
       <div>
-        <h3>Add Inventor to dashboard</h3>
+        <h3>Search Inventor's Patents</h3>
       </div>
       {{ form.hidden_tag() }}
       {% for field in form
@@ -27,7 +27,7 @@
         {% endfor %}
 
         {% endfor %}
-        <p><button type="submit">Add Patent</button>
+        <p><button type="submit">Search</button>
     </form>
   </div>
 

@@ -152,3 +152,8 @@ form {
 form>* {
     margin: 10px 0;
 }
+
+iframe {
+    border: 1px solid black;
+    width: 100%; /* takes precedence over the width set with the HTML width attribute */
+}

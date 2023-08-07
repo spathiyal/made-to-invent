@@ -1,0 +1,83 @@
+{% extends 'base1.html' %}
+
+{% block content %}
+
+<body>
+    <form action="POST">
+
+        <div class="div-container">
+
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+
+                        <th scope="col">Number</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Issued Date</th>
+                        <th scope="col">Inventor(s)</th>
+                        <th scope="col"><input type="checkbox" name="checkAll" class="checkAll"></th>
+                        <!-- <th scope="col"><button id="select-all">Select All</button></th> -->
+
+                <tbody>
+                    {% for patent in patents %}
+
+                    <tr>
+
+                        <td>
+                            <!-- <button type = "checkbox" class =""> X </button> -->
+                            <a href='{{patent.patent_number}}'>{{patent.patent_number}}</a>
+                        </td>
+
+                        <!-- <td>{{patent.patent_number}}</td> -->
+                        <td>{{patent.patent_title}} </td>
+                        <td>{{patent.patent_date}} </td>
+
+
+                        <td id="selection" class="selection" data-value="{{patent.patent_number}}"
+                            data-id="{{patent.patent_number}}" id="{{patent.patent_number}}">
+                            <!-- <td class="selection"> -->
+                            {% for i in patent.inventors %}
+
+                            {{i.inventor_first_name + ' ' + i.inventor_last_name}}
+
+                            {% endfor %}
+
+
+
+
+
+                        </td>
+
+
+
+
+                        <td> <input class="patent-selection" value={{patent.patent_number}}
+                                data-id="{{patent.patent_number}}" type="checkbox" id="{{patent.patent_number}}"
+                                name="select[]" class="checkboxes"></td>
+
+                    </tr>
+
+
+                    {% endfor %}
+                </tbody>
+
+                </tr>
+                </thead>
+        </div>
+
+        </table>
+
+
+
+        </div>
+
+    </form>
+    <div class="container">
+
+        <button class="submit" type="button" name="submit" id="submit">Save</button>
+
+    </div>
+    <h4 id="result"></h4>
+</body>
+
+{% endblock %}

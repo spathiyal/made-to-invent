@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Made To Invent</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/chart.css">
+</head>
+
+<body>
+  <div class="square">
+    <h1>Made To Invent</h1>
+    <nav class="navbar">
+      {% if g.user %}
+
+      <a href="/{{g.user.username}}"></a>
+      <a href="/dashboard">Dashboard</a>
+      <a href="/addpatent">Add Patents</a>
+      <a href="/addinventor">Add Inventor </a>
+      <a href="/logout"> Logout </a>
+      {% else %}
+      <a href="/signup">New User </a>
+
+      <a href="/login"> Login</a>
+
+      {% endif %}
+
+
+
+    </nav>
+    {% block content %}
+
+
+    {% endblock %}
+  </div>
+
+
+
+
+  <div class="container">
+    {% for category, message in get_flashed_messages(with_categories=True) %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+    <footer></footer>
+
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"
+      integrity="sha256-T/f7Sju1ZfNNfBh7skWn0idlCBcI3RwdLSS4/I7NQKQ=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="/static/app.js"></script>
+    <script src="https://code.jscharting.com/latest/jscharting.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+
+    <script src="/static/chart.js" type="text/javascript"> </script>
+
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.3.0/chart.min.js"
+      integrity="sha512-mlz/Fs1VtBou2TrUkGzX4VoGvybkD9nkeXWJm3rle0DPHssYYx4j+8kIS15T78ttGfmOjH0lLaBXGcShaVkdkg=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
+
+</body>
+
+</html>
+
+
+
+<!-- <script src="//cdn.amcharts.com/lib/5/index.js"></script>
+<script src="//cdn.amcharts.com/lib/5/xy.js"></script>
+<script src="//cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+<script src="//cdn.amcharts.com/lib/5/map.js"></script>
+<script src="//cdn.amcharts.com/lib/5/geodata/worldLow.js"></script>
+ <script src="/static/chart.js" type="text/javascript"></script> -->

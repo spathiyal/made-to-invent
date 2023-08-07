@@ -5,6 +5,7 @@ from datetime import datetime
 
 
 db = SQLAlchemy()
+# IMAGE_URL = "https://www.freeiconspng.com/uploads/icon-user-blue-symbol-people-person-generic--public-domain--21.png"
 
 
 def connect_db(app):
@@ -13,10 +14,8 @@ def connect_db(app):
     db.app = app
     db.init_app(app)
 
-
-
     with app.app_context():
-        db.drop_all()
+        # db.drop_all()
         db.create_all()
 
 
@@ -63,18 +62,19 @@ class User(db.Model):
 
 
 class Patent(db.Model):
-    """user table model"""
+    """patent table model"""
     __tablename__ = "patents"
     patent_number = db.Column(db.Text, primary_key=True,  unique=True)
     patent_title = db.Column(db.Text,
-                          nullable=False)
+                             nullable=False)
     issued_date = db.Column(
         db.DateTime,
         nullable=False,
         default=datetime.utcnow(),
     )
-    username = db.Column(db.String(20) )
-    iventions = db.relationship('InventorPatent',backref='patent')
+    username = db.Column(db.String(20))
+    iventions = db.relationship('InventorPatent', backref='patent')
+
     @classmethod
     def addPatentToList(cls, patent_number):
         """add new patent info."""
@@ -83,36 +83,40 @@ class Patent(db.Model):
         return cls(patent_number=patent_number)
 
 
-
 class Inventor(db.Model):
-    """Project. Employees can be assigned to this."""
+    """inventor mapping."""
     __tablename__ = "inventors"
-    inventor_id = db.Column(db.Integer,
-                   primary_key=True,
-                   autoincrement=True)
+    inventor_id = db.Column(db.Text,
+                            primary_key=True)
 
     inventor_name = db.Column(db.Text,
-                          nullable=False)
-    username = db.Column(db.String(20) )
+                              nullable=False)
+    username = db.Column(db.String(20))
 
-    patents = db.relationship('Patent',secondary = 'inventors_patents',backref = 'inventors')
-    iventions = db.relationship('InventorPatent',backref='inventorß')
+    patents = db.relationship(
+        'Patent', secondary='inventors_patents', backref='inventors')
+    iventions = db.relationship('InventorPatent', backref='inventorß')
 
 
 class InventorPatent(db.Model):
-    """Mapping of an employee to a project."""
+    """mapping patent and inventors."""
     __tablename__ = "inventors_patents"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
-    inventor_id = db.Column(db.Integer,
-                       db.ForeignKey("inventors.inventor_id"),
-                       primary_key=True)
+    inventor_id = db.Column(db.Text,
+                            db.ForeignKey("inventors.inventor_id"),
+                            primary_key=True)
     patent_number = db.Column(db.Text,
-                          db.ForeignKey("patents.patent_number"),
-                          primary_key=True)
+                              db.ForeignKey("patents.patent_number"),
+                              primary_key=True)
+    patent_title = db.Column(db.Text,
+                             nullable=False)
+    issued_date = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=datetime.utcnow(),
+    )
 
     username = db.Column(db.Text,
-                          db.ForeignKey("users.username"),
-                          primary_key=True)
-
-
-
+                         db.ForeignKey("users.username"),
+                         primary_key=True)

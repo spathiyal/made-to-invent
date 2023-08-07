@@ -30,4 +30,3 @@ class InventorForm(FlaskForm):
     firstname = StringField('First Name',validators=[InputRequired(message="First name is required")])
     lastname = StringField('Last Name',validators=[InputRequired(message="Last name is required")])
 
-

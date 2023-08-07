@@ -1,52 +1,61 @@
-{% extends 'base.html' %}
+{% extends 'base1.html' %}
+
 {% block content %}
 
 <body>
-    <div class="div-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Number</th>
-                    <th>Title</th>
-                    <th>Issued Date</th>
-                    <th>Inventor(s)</th>
+    <form action="POST">
 
-                </tr>
-            </thead>
+        <div class="div-container">
+            <div class="div-container"> Metrics</div>
+            <div class="canvas-container">
+                <canvas id="chartdiv1"></canvas>
+                <canvas id="chartdiv2"></canvas>
+                <canvas id="chartdiv3"></canvas>
+                <canvas id="chartdiv4"></canvas>
 
-            <tbody>
-                {% for patent in patents %}
-                {% if (patent.username == g.user.username) %}
+            </div>
 
-                <tr>
-                    <td> <a href='{{patent.patent_number}}'>{{patent.patent_number}}</a></td>
+            <!-- <div id="chartdiv" class="chartdiv"> </div> -->
+            <table class="table table-hover">
+                <thead>
+                    <tr>
 
-                    <!-- <td>{{patent.patent_number}}</td> -->
-                    <td>{{patent.patent_title}} </td>
-                    <td>{{patent.issued_date.strftime('%m-%d-%Y')}} </td>
+                        <th scope="col">Number</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Issued Date</th>
 
-                    <td colspan="3">
-                        <table>
-                            <tbody>
-                                {% for inventor in inventors %}
-                                {% for inventor_patent in inventors_patents %}
-                                {% if (inventor_patent.patent_number ==patent.patent_number) and
-                                (inventor_patent.inventor_id == inventor.inventor_id) and (inventor_patent.username == g.user.username) and (inventor.username == g.user.username) %}
-                                <tr>
-                                     <td class="inventor-td">{{inventor.inventor_name}}</td><br>
-                                </tr>
-                                {% endif %}
-                                {% endfor %}
+                    </tr>
+                <tbody>
 
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                {% endif %}
-                {% endfor %}
-            </tbody>
+                    {% for row in inventors_patents %}
+                    <tr>
+                        {% for cell in row %}
+
+                        <td>{{cell}}</td>
+
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+
+
+
+
+
+                </tbody>
+
+
+
+                </thead>
+        </div>
+
         </table>
-    </div>
+
+
+
+        </div>
+
+    </form>
+
 </body>
+
 {% endblock %}

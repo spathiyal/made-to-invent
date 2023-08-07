@@ -2,51 +2,81 @@
 <html>
 
 <head>
-  <title>Made To Invent</title>
+    <title>Made To Invent</title>
 
-  <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/mte.css">
 
 </head>
 
 <body>
+    <div class="row">
+        <div class="column left" id="leftId">
+            <h2>Made to <b>Invent</b> </h2>
+            <p>
+            <table>
 
-  <div class="square">
-    <h1>Made To Invent</h1>
-    <nav class="navbar">
-      {% if g.user %}
+                <div>
+                    {% if g.user %}
 
-     <a href="/{{g.user.username}}"></a>
+                    <a href="/{{g.user.username}}"></a>
 
-      <a href="/logout"> Logout </a>
+                    <a href="/logout"> Logout </a>
 
-      <a href="/addinventor">Add Inventor </a>
+                    <a href="/addinventor">Add Inventor </a>
 
-      <a href="/addpatent">Add Patents</a>
-      <a href="/dashboard">Dashboard</a>
-      {% else %}
-      <a href="/signup">New User </a>
+                    <a href="/addpatent">Add Patents</a>
+                    <a href="/dashboard">Dashboard</a>
+                    {% else %}
+                    <a href="/login"> </a>
+                     <div   class="new-user" >
 
-      <a href="/login"> Login</a>
+                        Are you logging in for the first time?
+                        <a   id="clickme" href="/signup"> Register </a>
+                    </div>
 
-      {% endif %}
+                    {% endif %}
+
+                </div>
+                <div>
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                    <ul class="messages">
+                        {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                    {% endwith %}
+                </div>
+
+                <div class=copy-write>
+                    ©2023 Made To Invent, Inc.
+                </div>
+
+        </div>
+        </table>
 
 
+        </p>
+    </div>
 
-    </nav>
-    {% block content %}
+    <div class="column right" id="rightId">
+
+        <p>
+        <section>
+            <br>
+
+            A digital vault for Innvoation <br>and Inspiration
 
 
-    {% endblock %}
-  </div>
+        </section>
+        </p>
+    </div>
+    </div>
 
-
-
-
-  <div class="container">
-    {% for category, message in get_flashed_messages(with_categories=True) %}
-    <div class="alert alert-{{ category }}">{{ message }}</div>
-    {% endfor %}
-    <footer></footer>
 </body>
-
+{% block content %}
+{% endblock %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+ <script src="/static/login.js"></script>
 </html>
